@@ -3,7 +3,7 @@ REM ********* Build Help
 @if %CS_HAS_HELP%==1 (
 	SET CS_ERROR=0
 	if NOT %CS_LANG_FOLDER%==English mklink /J ..\Localization\%CS_LANG_FOLDER%\images ..\Localization\English\images
-	hhc ..\Localization\%CS_LANG_FOLDER%\ClassicShell.hhp
+	"c:\Program Files (x86)\HTML Help Workshop\hhc.exe" ..\Localization\%CS_LANG_FOLDER%\ClassicShell.hhp
 	@REM looks like hhc returns 0 for error, >0 for success
 	@if NOT ERRORLEVEL 1 @SET CS_ERROR=1
 	if NOT %CS_LANG_FOLDER%==English rmdir ..\Localization\%CS_LANG_FOLDER%\images
@@ -35,22 +35,22 @@ del /Q Temp\*.*
 )
 
 REM ********* Build 32-bit MSI
-candle ClassicShellSetup.wxs -out Temp\ClassicShellSetup32.wixobj -ext WixUIExtension -ext WixUtilExtension -dx64=0 -dCS_LANG_FOLDER=%CS_LANG_FOLDER% -dCS_LANG_NAME=%CS_LANG_NAME%
+"c:\Program Files (x86)\WiX Toolset\candle.exe" ClassicShellSetup.wxs -out Temp\ClassicShellSetup32.wixobj -ext WixUIExtension -ext WixUtilExtension -dx64=0 -dCS_LANG_FOLDER=%CS_LANG_FOLDER% -dCS_LANG_NAME=%CS_LANG_NAME%
 @if ERRORLEVEL 1 exit /b 1
 
 @REM We need to suppress ICE38 and ICE43 because they apply only to per-user installation. We only support per-machine installs
 @REM We need to suppress ICE09 because the helper DLLs need to go into the system directory (for safety reasons)
-light Temp\ClassicShellSetup32.wixobj -out Temp\ClassicShellSetup32.msi -ext WixUIExtension -ext WixUtilExtension -loc ..\Localization\%CS_LANG_FOLDER%\ClassicShellText-%CS_LANG_NAME%.wxl -loc ..\Localization\%CS_LANG_FOLDER%\WixUI_%CS_LANG_NAME%.wxl -sice:ICE38 -sice:ICE43 -sice:ICE09
+"c:\Program Files (x86)\WiX Toolset\light.exe" Temp\ClassicShellSetup32.wixobj -out Temp\ClassicShellSetup32.msi -ext WixUIExtension -ext WixUtilExtension -loc ..\Localization\%CS_LANG_FOLDER%\ClassicShellText-%CS_LANG_NAME%.wxl -loc ..\Localization\%CS_LANG_FOLDER%\WixUI_%CS_LANG_NAME%.wxl -sice:ICE38 -sice:ICE43 -sice:ICE09
 @if ERRORLEVEL 1 exit /b 1
 
 
 REM ********* Build 64-bit MSI
-candle ClassicShellSetup.wxs -out Temp\ClassicShellSetup64.wixobj -ext WixUIExtension -ext WixUtilExtension -dx64=1 -dCS_LANG_FOLDER=%CS_LANG_FOLDER% -dCS_LANG_NAME=%CS_LANG_NAME%
+"c:\Program Files (x86)\WiX Toolset\candle.exe" ClassicShellSetup.wxs -out Temp\ClassicShellSetup64.wixobj -ext WixUIExtension -ext WixUtilExtension -dx64=1 -dCS_LANG_FOLDER=%CS_LANG_FOLDER% -dCS_LANG_NAME=%CS_LANG_NAME%
 @if ERRORLEVEL 1 exit /b 1
 
 @REM We need to suppress ICE38 and ICE43 because they apply only to per-user installation. We only support per-machine installs
 @REM We need to suppress ICE09 because the helper DLLs need to go into the system directory (for safety reasons)
-light Temp\ClassicShellSetup64.wixobj -out Temp\ClassicShellSetup64.msi -ext WixUIExtension -ext WixUtilExtension -loc ..\Localization\%CS_LANG_FOLDER%\ClassicShellText-%CS_LANG_NAME%.wxl -loc ..\Localization\%CS_LANG_FOLDER%\WixUI_%CS_LANG_NAME%.wxl -sice:ICE38 -sice:ICE43 -sice:ICE09
+"c:\Program Files (x86)\WiX Toolset\light.exe" Temp\ClassicShellSetup64.wixobj -out Temp\ClassicShellSetup64.msi -ext WixUIExtension -ext WixUtilExtension -loc ..\Localization\%CS_LANG_FOLDER%\ClassicShellText-%CS_LANG_NAME%.wxl -loc ..\Localization\%CS_LANG_FOLDER%\WixUI_%CS_LANG_NAME%.wxl -sice:ICE38 -sice:ICE43 -sice:ICE09
 @if ERRORLEVEL 1 exit /b 1
 
 
@@ -59,7 +59,8 @@ start /wait ClassicShellUtility\Release\ClassicShellUtility.exe crcmsi Temp
 @if ERRORLEVEL 1 exit /b 1
 
 REM ********* Build bootstrapper
-for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do set MSBuildDir=%%i\MSBuild\15.0\Bin\
+rem for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do set MSBuildDir=%%i\MSBuild\15.0\Bin\
+set MSBuildDir=c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\
 
 "%MSBuildDir%MSBuild.exe" ClassicShellSetup.sln /m /t:Rebuild /p:Configuration="Release" /p:Platform="Win32" /verbosity:minimal
 @if ERRORLEVEL 1 exit /b 1

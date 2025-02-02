@@ -74,11 +74,18 @@ void GetMetroLinks( std::vector<MetroLink> &links, bool bLog, std::vector<CStrin
 			PIDLIST_ABSOLUTE pidl;
 			if (!bNonApp && SUCCEEDED(SHGetIDListFromObject(pChild,&pidl)))
 			{
-				links.resize(links.size()+1);
-				MetroLink &link=*links.rbegin();
-				link.pidl.Attach(pidl);
-				link.appid=GetPropertyStoreString(pStore,PKEY_AppUserModel_ID);
-				link.pItem=pChild;
+				CString cAppid=GetPropertyStoreString(pStore,PKEY_AppUserModel_ID);
+				// Hack to not display Microsoft Edge entry with empty icon in Apps Menu
+				if (cAppid=="Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge")
+					bNonApp=true;
+				else
+				{
+					links.resize(links.size()+1);
+					MetroLink &link=*links.rbegin();
+					link.pidl.Attach(pidl);
+					link.appid=cAppid;
+					link.pItem=pChild;
+				}
 			}
 			else
 				bNonApp=true;

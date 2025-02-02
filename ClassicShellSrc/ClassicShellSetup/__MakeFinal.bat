@@ -1,7 +1,7 @@
 @cd %~dp0
 
 @rem Default version
-@set CS_VERSION=4.4.0
+@set CS_VERSION=4.3.1
 
 @if defined APPVEYOR_BUILD_VERSION (
 	@set CS_VERSION=%APPVEYOR_BUILD_VERSION%

@@ -4,7 +4,8 @@ md Output\x64
 md Output\PDB32
 md Output\PDB64
 
-for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do set MSBuildDir=%%i\MSBuild\15.0\Bin\
+REM for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do set MSBuildDir=%%i\MSBuild\15.0\Bin\
+set MSBuildDir=c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\
 
 REM ********* Build 64-bit solution
 "%MSBuildDir%MSBuild.exe" ..\ClassicShell.sln /m /t:Rebuild /p:Configuration="Setup" /p:Platform="x64" /verbosity:minimal
@@ -116,7 +117,7 @@ cd ..\Localization\English
 @if ERRORLEVEL 1 exit /b 1
 md en-US
 copy /B *.adml en-US
-7z a ..\..\ClassicShellSetup\Output\PolicyDefinitions.zip *.admx en-US\*.adml PolicyDefinitions.rtf
+"c:\Program Files\7-Zip\7z.exe" a ..\..\ClassicShellSetup\Output\PolicyDefinitions.zip *.admx en-US\*.adml PolicyDefinitions.rtf
 rd /Q /S en-US
 cd ..\..\ClassicShellSetup
 
